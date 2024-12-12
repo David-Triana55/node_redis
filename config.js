@@ -1,5 +1,7 @@
-module.exports = {
-  api: {
-      port: process.env.API_PORT || 3000,
-  }
+require('dotenv').config()
+
+const config = {
+  port: process.env.PORT || 3000
 }
+
+module.exports = config

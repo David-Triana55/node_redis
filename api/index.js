@@ -1,11 +1,13 @@
 const express = require('express')
-const config = require('../config')
 const user = require('./components/user/network')
 const app = express()
+const config = require('./../config')
+
+const PORT = config.port
 
 app.use(express.json())
 app.use('/api/user', user)
 
-app.listen(() => {
-    console.log('listening in port' + config.api.port)
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })

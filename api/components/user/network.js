@@ -1,6 +1,6 @@
 const express = require('express')
 
-const response = require('../../../network/response')
+const { success, error } = require('../../../network/response')
 const Controller = require('./index')
 
 const router = express.Router()
@@ -8,21 +8,37 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const list = await Controller.list()
-    response.success(req,res,list,200)
+    success(req, res, list, 200)
   } catch (e) {
-    response.error(req,res,e.message, 500)
+    error(req, res, e.message, 500)
   }
-
 })
 
-router.get('/:id', async  (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const user = await Controller.get(req.params.id)
-    response.success(req,res,user,200)
+    success(req, res, user, 200)
   } catch (e) {
-    response.error(res,res,e.message,500)
+    error(res, res, e.message, 500)
   }
+})
 
+router.post('/', async (req, res) => {
+  try {
+    const user = await Controller.upsert(req.body)
+    success(req, res, user, 200)
+  } catch (e) {
+    error(req, res, e.message, 500)
+  }
+})
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const user = await Controller.remove(req.params.id)
+    success(req, res, user, 200)
+  } catch (e) {
+    error(req, res, e.message, 500)
+  }
 })
 
 module.exports = router
