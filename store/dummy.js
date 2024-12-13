@@ -26,7 +26,16 @@ async function upsert (tabla, data) {
   console.log(db)
 }
 
+async function query (tabla, q) {
+  const col = await list(tabla)
+  const keys = Object.keys(q)
+  const key = keys[0]
+
+  return col.filter(item => item[key] === q[key])[0] || null
+}
+
 module.exports = {
+  query,
   list,
   get,
   upsert
