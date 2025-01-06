@@ -1,46 +1,44 @@
-const TABLA = 'user'
+const express = require('express')
 
-const auth = require('../auth')
-const bcrypt = require('bcrypt')
-module.exports = function (injectedStore) {
-  let store = injectedStore
-  if (!store) {
-    store = require('../../../store/dummy')
+const { success, error } = require('../../../network/response')
+const Controller = require('./index')
+
+const router = express.Router()
+
+router.get('/', async (req, res) => {
+  try {
+    const list = await Controller.list()
+    success(req, res, list, 200)
+  } catch (e) {
+    error(req, res, e.message, 500)
   }
+})
 
-  function list () {
-    return store.list(TABLA)
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await Controller.get(req.params.id)
+    success(req, res, user, 200)
+  } catch (e) {
+    error(res, res, e.message, 500)
   }
+})
 
-  function get (id) {
-    return store.get(TABLA, id)
+router.post('/', async (req, res) => {
+  try {
+    const user = await Controller.upsert(req.body)
+    success(req, res, user, 200)
+  } catch (e) {
+    error(req, res, e.message, 500)
   }
+})
 
-  async function upsert (data) {
-    const userData = {
-      name: data.name,
-      username: data.username
-    }
-
-    if (data.id) {
-      userData.id = data.id
-    } else {
-      userData.id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-    }
-
-    if (data.password || data.username) {
-      await auth.upsert({
-        id: userData.id,
-        username: data.username,
-        password: await bcrypt.hash(data.password, 10)
-      })
-    }
-    return store.upsert(TABLA, userData)
+router.delete('/:id', async (req, res) => {
+  try {
+    const user = await Controller.remove(req.params.id)
+    success(req, res, user, 200)
+  } catch (e) {
+    error(req, res, e.message, 500)
   }
+})
 
-  return {
-    list,
-    get,
-    upsert
-  }
-}
+module.exports = router

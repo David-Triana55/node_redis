@@ -1,6 +1,6 @@
 const express = require('express')
-const user = require('./components/user/network')
-const auth = require('./components/auth/network')
+const user = require('./components/user/controller')
+const auth = require('./components/auth/controller')
 const app = express()
 const config = require('./../config')
 

@@ -1,42 +1,17 @@
-const TABLA = 'auth'
+const express = require('express')
 
-const auth = require('../../../auth')
-const bcrypt = require('bcrypt')
+const router = express.Router()
 
-module.exports = (injectedStore) => {
-  let store = injectedStore
-  if (!store) {
-    store = require('../../../store/dummy')
+const { success, error } = require('../../../network/response')
+const Controller = require('./index')
+
+router.post('/login', async (req, res) => {
+  try {
+    const user = await Controller.login(req.body)
+    success(req, res, user, 200)
+  } catch (e) {
+    error(req, res, e.message, 500)
   }
+})
 
-  async function login (data) {
-    const user = await store.query(TABLA, { username: data.username, password: data.password })
-    const isMatch = await bcrypt.compare(data.password, user.password)
-    if (isMatch) {
-      return auth.sign(user)
-    } else {
-      throw new Error('Invalid username or password')
-    }
-  }
-
-  function upsert (data) {
-    const authData = {
-      id: data.id
-    }
-
-    if (data.username) {
-      authData.username = data.username
-    }
-
-    if (data.password) {
-      authData.password = data.password
-    }
-
-    return store.upsert(TABLA, authData)
-  }
-
-  return {
-    login,
-    upsert
-  }
-}
+module.exports = router
