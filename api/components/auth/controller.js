@@ -1,8 +1,9 @@
 const TABLA = 'auth'
 
 const auth = require('../../../auth')
+const bcrypt = require('bcrypt')
 
-module.exports = function (injectedStore) {
+module.exports = (injectedStore) => {
   let store = injectedStore
   if (!store) {
     store = require('../../../store/dummy')
@@ -10,7 +11,8 @@ module.exports = function (injectedStore) {
 
   async function login (data) {
     const user = await store.query(TABLA, { username: data.username, password: data.password })
-    if (user.password === data.password) {
+    const isMatch = await bcrypt.compare(data.password, user.password)
+    if (isMatch) {
       return auth.sign(user)
     } else {
       throw new Error('Invalid username or password')

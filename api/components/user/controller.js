@@ -1,7 +1,7 @@
 const TABLA = 'user'
 
 const auth = require('../auth')
-
+const bcrypt = require('bcrypt')
 module.exports = function (injectedStore) {
   let store = injectedStore
   if (!store) {
@@ -32,7 +32,7 @@ module.exports = function (injectedStore) {
       await auth.upsert({
         id: userData.id,
         username: data.username,
-        password: data.password
+        password: await bcrypt.hash(data.password, 10)
       })
     }
     return store.upsert(TABLA, userData)
