@@ -1,7 +1,7 @@
 const TABLA = 'user'
 
+const error = require('../../../utils/error')
 const auth = require('../auth')
-const bcrypt = require('bcrypt')
 module.exports = function (injectedStore) {
   let store = injectedStore
   if (!store) {
@@ -23,24 +23,39 @@ module.exports = function (injectedStore) {
     }
 
     if (data.id) {
-      userData.id = data.id
+      const userId = await get(data.id)
+
+      userData.id = userId.id
     } else {
       userData.id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    }
+
+    if (data.username) {
+      const userUsername = await list()
+      const alreadyExists = userUsername.filter(item => item.username === data.username)
+      if (alreadyExists.length) {
+        throw error('Username already exists', 400)
+      }
     }
 
     if (data.password || data.username) {
       await auth.upsert({
         id: userData.id,
         username: data.username,
-        password: await bcrypt.hash(data.password, 10)
+        password: data.password
       })
     }
     return store.upsert(TABLA, userData)
   }
 
+  function remove (id) {
+    return store.remove(TABLA, id)
+  }
+
   return {
     list,
     get,
-    upsert
+    upsert,
+    remove
   }
 }

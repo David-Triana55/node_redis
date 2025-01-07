@@ -2,6 +2,7 @@ const TABLA = 'auth'
 
 const auth = require('../../../auth')
 const bcrypt = require('bcrypt')
+const error = require('../../../utils/error')
 
 module.exports = (injectedStore) => {
   let store = injectedStore
@@ -15,11 +16,11 @@ module.exports = (injectedStore) => {
     if (isMatch) {
       return auth.sign(user)
     } else {
-      throw new Error('Invalid username or password')
+      throw error('Invalid username or password', 401)
     }
   }
 
-  function upsert (data) {
+  async function upsert (data) {
     const authData = {
       id: data.id
     }
@@ -29,7 +30,7 @@ module.exports = (injectedStore) => {
     }
 
     if (data.password) {
-      authData.password = data.password
+      authData.password = await bcrypt.hash(data.password, 10)
     }
 
     return store.upsert(TABLA, authData)

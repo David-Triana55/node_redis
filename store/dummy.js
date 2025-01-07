@@ -36,9 +36,14 @@ async function query (tabla, q) {
   return col.filter(item => item[key] === q[key])[0] || null
 }
 
+async function remove (tabla, id) {
+  return db[tabla].filter(item => item.id !== id)
+}
+
 module.exports = {
   query,
   list,
   get,
-  upsert
+  upsert,
+  remove
 }
