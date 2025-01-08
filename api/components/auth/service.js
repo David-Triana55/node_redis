@@ -11,10 +11,15 @@ module.exports = (injectedStore) => {
   }
 
   async function login (data) {
-    const user = await store.query(TABLA, { username: data.username, password: data.password })
-    const isMatch = await bcrypt.compare(data.password, user.password)
+    const user = await store.list(TABLA)
+    const userData = user.filter(item => item.username === data.username)
+    if (userData.length === 0) {
+      throw error('Invalid username or password', 401)
+    }
+    console.log(userData, 'userData')
+    const isMatch = await bcrypt.compare(data.password, userData[0].password)
     if (isMatch) {
-      return auth.sign(user)
+      return auth.sign(userData[0])
     } else {
       throw error('Invalid username or password', 401)
     }

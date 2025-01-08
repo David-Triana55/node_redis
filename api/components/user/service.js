@@ -52,10 +52,25 @@ module.exports = function (injectedStore) {
     return store.remove(TABLA, id)
   }
 
+  function update (id, data) {
+    return store.update(TABLA, id, data)
+  }
+
+  function follow (from, to) {
+    return store.follow(TABLA + '_follow', from, to)
+  }
+
+  function isFollowing (from) {
+    return store.isFollowing(TABLA + '_follow', from)
+  }
+
   return {
     list,
     get,
     upsert,
-    remove
+    remove,
+    update,
+    follow,
+    isFollowing
   }
 }
