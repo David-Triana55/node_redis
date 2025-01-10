@@ -1,14 +1,14 @@
 const express = require('express')
 
 const { success } = require('../../../network/response')
-const Controller = require('./index')
+const Service = require('./index')
 const secure = require('./secure')
 
 const router = express.Router()
 
 router.get('/', async (req, res, next) => {
   try {
-    const list = await Controller.list()
+    const list = await Service.list()
     success(req, res, list, 200)
   } catch (e) {
     next(e)
@@ -17,7 +17,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const user = await Controller.get(req.params.id)
+    const user = await Service.get(req.params.id)
     success(req, res, user, 200)
   } catch (e) {
     next(e)
@@ -26,7 +26,7 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const user = await Controller.upsert(req.body)
+    const user = await Service.upsert(req.body)
     success(req, res, user, 200)
   } catch (e) {
     next(e)
@@ -35,7 +35,7 @@ router.post('/', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
   try {
-    const user = await Controller.remove(req.params.id)
+    const user = await Service.remove(req.params.id)
     success(req, res, user, 200)
   } catch (e) {
     next(e)
@@ -44,7 +44,7 @@ router.delete('/:id', async (req, res, next) => {
 
 router.put('/', secure('update'), async (req, res, next) => {
   try {
-    const user = await Controller.update(req.body.id, req.body)
+    const user = await Service.update(req.body.id, req.body)
     success(req, res, user, 200)
   } catch (e) {
     next(e)
@@ -54,7 +54,7 @@ router.put('/', secure('update'), async (req, res, next) => {
 router.post('/follow/:id', secure('follow'), async (req, res, next) => {
   try {
     console.log(req.user, 'req')
-    const user = await Controller.follow(req.user.id, req.params.id)
+    const user = await Service.follow(req.user.id, req.params.id)
     success(req, res, user, 200)
   } catch (e) {
     next(e)
@@ -63,7 +63,7 @@ router.post('/follow/:id', secure('follow'), async (req, res, next) => {
 
 router.get('/:id/following', async (req, res, next) => {
   try {
-    const user = await Controller.isFollowing(req.params.id)
+    const user = await Service.isFollowing(req.params.id)
     success(req, res, user, 200)
   } catch (e) {
     next(e)

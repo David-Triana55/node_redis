@@ -1,14 +1,12 @@
 const express = require('express')
-
-const router = express.Router()
-
-const { success } = require('../../../network/response')
 const Service = require('./index')
+const router = express.Router()
+const { success } = require('../../../network/response')
 
-router.post('/login', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
-    const user = await Service.login(req.body)
-    success(req, res, user, 200)
+    const list = await Service.list()
+    success(req, res, list, 200)
   } catch (e) {
     next(e)
   }

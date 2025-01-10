@@ -8,6 +8,10 @@ const config = {
     user: process.env.MYSQL_USER || 'root',
     password: process.env.MYSQL_PASSWORD || '',
     database: process.env.MYSQL_DATABASE || 'node_db'
+  },
+  mysqlService: {
+    port: process.env.MYSQL_SRV_PORT || 3001,
+    host: process.env.MYSQL_SRV_HOST || 'localhost'
   }
 }
 
