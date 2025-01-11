@@ -37,8 +37,9 @@ module.exports = (injectedStore) => {
     if (data.password) {
       authData.password = await bcrypt.hash(data.password, 10)
     }
+    console.log(authData, 'authData-------')
 
-    return store.upsert(TABLA, authData)
+    return await store.upsert(TABLA, authData)
   }
 
   return {

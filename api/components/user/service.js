@@ -8,15 +8,18 @@ module.exports = function (injectedStore) {
     store = require('../../../store/dummy')
   }
 
-  function list () {
-    return store.list(TABLA)
+  async function list () {
+    console.log(TABLA, 'TABLA/list')
+    return await store.list(TABLA)
   }
 
-  function get (id) {
-    return store.get(TABLA, id)
+  async function get (id) {
+    console.log(id, 'id/get')
+    return await store.get(TABLA, id)
   }
 
   async function upsert (data) {
+    console.log(data, 'data-----')
     const userData = {
       name: data.name,
       username: data.username
@@ -45,6 +48,7 @@ module.exports = function (injectedStore) {
         password: data.password
       })
     }
+    console.log(userData, 'userData-------')
     return store.upsert(TABLA, userData)
   }
 
@@ -53,6 +57,7 @@ module.exports = function (injectedStore) {
   }
 
   function update (id, data) {
+    console.log(id, data, 'id, data-----')
     return store.update(TABLA, id, data)
   }
 

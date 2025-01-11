@@ -8,8 +8,8 @@ const response = require('../network/response')
 router.get('/:table', list)
 router.get('/:table/:id', get)
 router.post('/:table', upsert)
-router.put('/:table', update)
-router.delete('/:table', remove)
+router.put('/:table/:id', update)
+router.delete('/:table/:id', remove)
 
 // internal functions
 
@@ -34,6 +34,7 @@ async function get (req, res, next) {
 async function upsert (req, res, next) {
   try {
     const data = await store.upsert(req.params.table, req.body)
+    console.log(req.body, 'req.body')
     response.success(req, res, data, 200)
   } catch (e) {
     next(e)
@@ -42,7 +43,7 @@ async function upsert (req, res, next) {
 
 async function update (req, res, next) {
   try {
-    const data = await store.update(req.params.table, req.body)
+    const data = await store.update(req.params.table, req.body.id, req.body)
     response.success(req, res, data, 200)
   } catch (e) {
     next(e)
@@ -51,7 +52,7 @@ async function update (req, res, next) {
 
 async function remove (req, res, next) {
   try {
-    const data = await store.remove(req.params.table, req.body)
+    const data = await store.remove(req.params.table, req.params.id)
     response.success(req, res, data, 200)
   } catch (e) {
     next(e)

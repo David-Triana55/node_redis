@@ -44,7 +44,8 @@ router.delete('/:id', async (req, res, next) => {
 
 router.put('/', secure('update'), async (req, res, next) => {
   try {
-    const user = await Service.update(req.body.id, req.body)
+    console.log(req)
+    const user = await Service.update(req.user.id, req.body)
     success(req, res, user, 200)
   } catch (e) {
     next(e)

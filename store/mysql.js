@@ -47,6 +47,9 @@ async function get (table, id) {
   try {
     const query = `SELECT * FROM ${table} WHERE id = '${id}'`
     const [rows] = await connection.query(query)
+    if (rows.length === 0) {
+      throw error('User not found', 404)
+    }
     return rows[0]
   } catch (err) {
     console.error('[db error]', err)
@@ -55,6 +58,7 @@ async function get (table, id) {
 }
 async function upsert (table, data) {
   try {
+    console.log(data, 'data-----')
     const keys = Object.keys(data).join(',') // Ejemplo: "nombre,contraseña"
     const placeholders = Object.keys(data).map(() => '?').join(',') // Genera "?,?" para los valores
     const values = Object.values(data) // Array con los valores
@@ -74,9 +78,9 @@ async function update (table, id, data) {
     const keys = Object.keys(data)
     const setClause = keys.map(key => `\`${key}\` = ?`).join(', ')
 
-    // Generar la consulta SQL
     const query = `UPDATE \`${table}\` SET ${setClause} WHERE id = ?`
 
+    console.log(query, 'query')
     // Obtener los valores del objeto data
     const values = Object.values(data)
 
@@ -126,11 +130,27 @@ async function isFollowing (table, from) {
   }
 }
 
+async function remove (table, id) {
+  try {
+    const toExist = await get(table, id)
+    if (!toExist) {
+      throw error('User not found', 404)
+    }
+
+    const query = `DELETE FROM ${table} WHERE id = ?`
+    const [rows] = await connection.query(query, [id])
+    return rows
+  } catch (e) {
+    throw error(e, 500)
+  }
+}
+
 module.exports = {
   list,
   get,
   upsert,
   update,
   follow,
-  isFollowing
+  isFollowing,
+  remove
 }
