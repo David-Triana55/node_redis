@@ -4,14 +4,14 @@ const auth = require('../../../auth')
 const bcrypt = require('bcrypt')
 const error = require('../../../utils/error')
 
-module.exports = (injectedStore) => {
-  let store = injectedStore
-  if (!store) {
-    store = require('../../../store/dummy')
+module.exports = (injectedDb) => {
+  let db = injectedDb
+  if (!db) {
+    db = require('../../../store/dummy')
   }
 
   async function login (data) {
-    const user = await store.list(TABLA)
+    const user = await db.list(TABLA)
     const userData = user.filter(item => item.username === data.username)
     if (userData.length === 0) {
       throw error('Invalid username or password', 401)
@@ -39,7 +39,7 @@ module.exports = (injectedStore) => {
     }
     console.log(authData, 'authData-------')
 
-    return await store.upsert(TABLA, authData)
+    return await db.upsert(TABLA, authData)
   }
 
   return {

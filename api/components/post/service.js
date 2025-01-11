@@ -1,12 +1,12 @@
-module.exports = (injectedStore) => {
-  let store = injectedStore
+module.exports = (injectedDb) => {
+  let db = injectedDb
 
-  if (!store) {
-    store = require('../../../store/mysql')
+  if (!db) {
+    db = require('../../../store/mysql')
   }
 
   async function list () {
-    return store.list()
+    return db.list()
   }
 
   return {
