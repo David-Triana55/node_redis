@@ -1,4 +1,4 @@
-const auth = require('../../../auth')
+const auth = require('../auth')
 
 function checkAuth (action) {
   return (req, res, next) => {
@@ -10,6 +10,11 @@ function checkAuth (action) {
         break
       }
       case 'follow': {
+        auth.check.logged(req)
+        next()
+        break
+      }
+      case 'createPost': {
         auth.check.logged(req)
         next()
         break

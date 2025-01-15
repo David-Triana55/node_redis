@@ -7,17 +7,9 @@ class RemoteDB {
     this.port = port
   }
 
-  async req (method, table, id = '', body = {}) {
+  async req (method, table, id = '', body = {}, params = '') {
     try {
-      console.log({
-        method,
-        table,
-        id,
-        body
-      })
-
-      const url = `http://${this.host}:${this.port}/${table}${id ? `/${id}` : ''}`
-      console.log('URL construida:', url)
+      const url = `http://${this.host}:${this.port}/${table}${id ? `/${id}` : ''}${params ? `/${params}` : ''}`
 
       const options = method === 'post' || method === 'put'
         ? { data: body }
@@ -48,6 +40,14 @@ class RemoteDB {
 
   async remove (table, id) {
     return await this.req('delete', table, id)
+  }
+
+  async isFollowing (table, id) {
+    return await this.req('get', table, id, '', 'following')
+  }
+
+  async follow (table, from, to) {
+    return await this.req('post', table, from, '', to)
   }
 }
 

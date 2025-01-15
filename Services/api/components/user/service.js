@@ -2,24 +2,39 @@ const TABLA = 'user'
 
 const error = require('../../../utils/error')
 const auth = require('../auth')
-module.exports = function (injectedDb) {
+module.exports = function (injectedDb, injectedCache) {
+  const cache = injectedCache
   let db = injectedDb
   if (!db) {
     db = require('../../../store/dummy')
   }
 
   async function list () {
-    console.log(TABLA, 'TABLA/list')
-    return await db.list(TABLA)
+    let users = await cache.list(TABLA)
+    if (users) {
+      console.log(users)
+      console.log('desde cache')
+    }
+
+    if (!users) {
+      users = await db.list(TABLA)
+      cache.upsert(TABLA, users)
+      console.log('desde la base de datos')
+    }
+    return users
   }
 
   async function get (id) {
-    console.log(id, 'id/get')
-    return await db.get(TABLA, id)
+    let users = await cache.get(TABLA, id)
+    if (!users) {
+      console.log('desde la base de datos')
+      users = await db.get(TABLA, id)
+      await cache.insert(TABLA, id, users)
+    }
+    return users
   }
 
   async function upsert (data) {
-    console.log(data, 'data-----')
     const userData = {
       name: data.name,
       username: data.username
@@ -48,7 +63,6 @@ module.exports = function (injectedDb) {
         password: data.password
       })
     }
-    console.log(userData, 'userData-------')
     return db.upsert(TABLA, userData)
   }
 
@@ -57,7 +71,6 @@ module.exports = function (injectedDb) {
   }
 
   function update (id, data) {
-    console.log(id, data, 'id, data-----')
     return db.update(TABLA, id, data)
   }
 

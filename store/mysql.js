@@ -48,7 +48,12 @@ async function get (table, id) {
     const query = `SELECT * FROM ${table} WHERE id = '${id}'`
     const [rows] = await connection.query(query)
     if (rows.length === 0) {
-      throw error('User not found', 404)
+      const query = `SELECT * FROM ${table} WHERE user_id = '${id}'`
+      const [rows] = await connection.query(query)
+      if (rows.length === 0) {
+        throw error('User not found', 404)
+      }
+      return rows
     }
     return rows[0]
   } catch (err) {
